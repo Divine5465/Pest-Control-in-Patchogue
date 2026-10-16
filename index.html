@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verdant Shield Pest Solutions | Premium Eco-Friendly Pest Control</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#F0FDF4',
+                            100: '#DCFCE7',
+                            200: '#BBF7D0',
+                            300: '#86EFAC',
+                            400: '#4ADE80',
+                            500: '#10B981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065F46',
+                            900: '#064E3B',
+                            dark: '#0B132B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+                        'spin-slow': 'spin 25s linear infinite',
+                        'radar-sweep': 'radarSweep 4s linear infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-12px) rotate(1.5deg)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.3', transform: 'scale(1)' },
+                            '50%': { opacity: '0.7', transform: 'scale(1.08)' },
+                        },
+                        radarSweep: {
+                            '0%': { transform: 'rotate(0deg)' },
+                            '100%': { transform: 'rotate(360deg)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tone.js for Web Audio Ambient Synth -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #070D1E;
+            color: #F8FAFC;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glowing Background Mesh */
+        .bg-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(5, 150, 105, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(6, 78, 59, 0.22) 0%, transparent 65%);
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* High-End Transition Shutter Screen */
+        #transition-shutter {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(circle at center, rgba(16, 185, 129, 0.35) 0%, rgba(7, 13, 30, 0.95) 70%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: scale(1.08);
+        }
+
+        #transition-shutter.shutter-active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        /* Apple Glassmorphism */
+        .glass-panel {
+            background: rgba(13, 22, 45, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-nav {
+            background: rgba(7, 13, 30, 0.82);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Page Transitions with Graphic Motion */
+        .page-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .page-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .apple-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .apple-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+            transition: 0.6s;
+        }
+        .apple-card:hover::before {
+            left: 100%;
+        }
+        .apple-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 25px 45px -15px rgba(16, 185, 129, 0.25);
+        }
+
+        /* Animated SVG Progress Bar Stroke */
+        .stat-ring-circle {
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #070D1E; }
+        ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.2); }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        .glow-badge { box-shadow: 0 0 20px rgba(16, 185, 129, 0.35); }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between relative selection:bg-brand-500 selection:text-slate-950">
+
+    <!-- TRANSITION SHUTTER OVERLAY -->
+    <div id="transition-shutter" class="flex flex-col items-center justify-center">
+        <div class="relative w-16 h-16 mb-4">
+            <div class="absolute inset-0 rounded-full border-2 border-brand-400 border-t-transparent animate-spin"></div>
+            <div class="absolute inset-2 rounded-full border-2 border-emerald-300 border-b-transparent animate-spin-slow"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-brand-400">
+                <i class="fa-solid fa-leaf text-lg animate-pulse"></i>
+            </div>
+        </div>
+        <span class="text-xs font-mono tracking-widest text-brand-300 uppercase animate-pulse">Calibrating Protocol...</span>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND GRAPHICS -->
+    <div class="bg-mesh"></div>
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- HEADER NAVIGATION & AUDIO CONTROL -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Brand Logo -->
+            <a href="#" onclick="switchPage('home'); return false;" class="flex items-center space-x-3 group">
+                <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-400 via-brand-600 to-emerald-900 flex items-center justify-center text-white shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform overflow-hidden">
+                    <svg class="w-6 h-6 text-white transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                    <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                <div>
+                    <span class="text-xl font-black tracking-tight text-white group-hover:text-brand-400 transition-colors flex items-center gap-1.5">
+                        Verdant Shield <span class="w-2 h-2 rounded-full bg-brand-400 animate-ping"></span>
+                    </span>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-widest uppercase -mt-1">Eco-Precision Control</p>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center space-x-1 bg-slate-900/80 p-1.5 rounded-full border border-slate-800/80 backdrop-blur-lg">
+                <button onclick="switchPage('home')" id="nav-home" class="nav-btn px-5 py-2 text-xs font-semibold rounded-full transition-all duration-300 text-slate-400 hover:text-white">Home</button>
+                <button onclick="switchPage('services')" id="nav-services" class="nav-btn px-5 py-2 text-xs font-semibold rounded-full transition-all duration-300 text-slate-400 hover:text-white">Services</button>
+                <button onclick="switchPage('about')" id="nav-about" class="nav-btn px-5 py-2 text-xs font-semibold rounded-full transition-all duration-300 text-slate-400 hover:text-white">About Us</button>
+                <button onclick="switchPage('blog')" id="nav-blog" class="nav-btn px-5 py-2 text-xs font-semibold rounded-full transition-all duration-300 text-slate-400 hover:text-white">Articles</button>
+                <button onclick="switchPage('contact')" id="nav-contact" class="nav-btn px-5 py-2 text-xs font-semibold rounded-full transition-all duration-300 text-slate-400 hover:text-white">Contact</button>
+            </nav>
+
+            <!-- Actions: CTA -->
+            <div class="hidden md:flex items-center space-x-3">
+                <button onclick="switchPage('contact')" class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-xs font-bold rounded-full group bg-gradient-to-br from-brand-400 to-brand-700 text-white shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40 transition-all">
+                    <span class="relative px-5 py-2 transition-all ease-in duration-75 bg-slate-950 rounded-full group-hover:bg-opacity-0 flex items-center space-x-2">
+                        <span>Get Consultation</span>
+                        <i class="fa-solid fa-sparkles text-brand-400 group-hover:text-white text-xs"></i>
+                    </span>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Switcher -->
+            <div class="md:hidden flex items-center space-x-2">
+                <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="text-slate-300 p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                    <i class="fa-solid fa-bars text-lg" id="menu-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-800 bg-slate-950/95 backdrop-blur-2xl px-6 pt-3 pb-8 space-y-3">
+            <button onclick="switchPage('home'); toggleMobileMenu();" class="block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-900 hover:text-brand-400">Home</button>
+            <button onclick="switchPage('services'); toggleMobileMenu();" class="block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-900 hover:text-brand-400">Services</button>
+            <button onclick="switchPage('about'); toggleMobileMenu();" class="block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-900 hover:text-brand-400">About Us</button>
+            <button onclick="switchPage('blog'); toggleMobileMenu();" class="block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-900 hover:text-brand-400">Articles</button>
+            <button onclick="switchPage('contact'); toggleMobileMenu();" class="block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-900 hover:text-brand-400">Contact</button>
+        </div>
+    </header>
+
+    <!-- MAIN PAGES CONTAINER -->
+    <main class="flex-grow pt-28 pb-16">
+
+        <!-- ================= PAGE 1: HOME PAGE ================= -->
+        <section id="page-home" class="page-content active">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-16">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    
+                    <div class="space-y-8">
+                        <div class="inline-flex items-center space-x-3 glass-panel px-4 py-2 rounded-full border border-brand-500/30 text-brand-300 text-xs font-semibold glow-badge">
+                            <span class="flex h-2 w-2 rounded-full bg-brand-400 animate-pulse"></span>
+                            <span>Next-Gen Botanical Barrier Tech</span>
+                        </div>
+
+                        <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-[1.1]">
+                            Bio-precision defense for <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-400 to-emerald-200">sanctuary living.</span>
+                        </h1>
+
+                        <p class="text-base sm:text-lg text-slate-400 font-normal leading-relaxed max-w-xl">
+                            Eliminating invasive threats with advanced botanical micro-formulations. Zero toxic residue, 100% ecosystem harmony tailored for coastal Long Island properties.
+                        </p>
+
+                        <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                            <button onclick="switchPage('contact')" class="group relative px-8 py-4 rounded-full bg-gradient-to-r from-brand-500 to-emerald-600 font-bold text-white shadow-xl shadow-brand-500/25 hover:shadow-brand-500/40 transition-all flex items-center justify-center space-x-3">
+                                <span>Schedule Inspection</span>
+                                <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                            </button>
+                            <button onclick="switchPage('services')" class="px-8 py-4 rounded-full glass-panel border border-slate-700 hover:border-brand-500/50 text-slate-200 font-semibold transition-all flex items-center justify-center space-x-2">
+                                <span>Explore Protocols</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Hero Visual HUD Graphic with Real-Time Iterating Gauges -->
+                    <div class="relative flex justify-center items-center">
+                        <div class="absolute w-80 h-80 bg-brand-500/20 rounded-full filter blur-3xl animate-pulse-glow"></div>
+
+                        <div class="relative w-full max-w-lg glass-panel rounded-3xl p-6 border border-slate-700/80 apple-card shadow-2xl">
+                            
+                            <!-- Header HUD Status -->
+                            <div class="flex items-center justify-between pb-4 border-b border-slate-800 text-xs font-mono text-slate-400">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-brand-400 animate-ping"></span>
+                                    <span>SYSTEM STATUS: ACTIVE</span>
+                                </span>
+                                <span class="text-brand-400 font-bold">LATENCY: 0.04ms</span>
+                            </div>
+
+                            <!-- Animated Real-time Counter Ring Graphic -->
+                            <div class="my-6 grid grid-cols-2 gap-4 items-center">
+                                <div class="relative flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-950/60 border border-slate-800">
+                                    <svg class="w-28 h-28 transform -rotate-90">
+                                        <circle cx="56" cy="56" r="45" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="transparent" />
+                                        <circle id="home-ring" class="stat-ring-circle" cx="56" cy="56" r="45" stroke="#10B981" stroke-width="8" fill="transparent" stroke-linecap="round" />
+                                    </svg>
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                        <span id="counter-home-eff" class="text-2xl font-black font-mono text-white">0%</span>
+                                        <span class="text-[9px] text-slate-400 font-mono tracking-wider uppercase">Efficiency</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3 font-mono">
+                                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                                        <span class="text-[10px] text-slate-400 uppercase block">Active Shield Area</span>
+                                        <span id="counter-home-sqft" class="text-lg font-bold text-brand-400">0</span> <span class="text-xs text-slate-400">sq ft</span>
+                                    </div>
+                                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                                        <span class="text-[10px] text-slate-400 uppercase block">Toxicity Index</span>
+                                        <span id="counter-home-tox" class="text-lg font-bold text-emerald-400">0.00</span> <span class="text-xs text-slate-400">ppm</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Image Display -->
+                            <div class="relative rounded-2xl overflow-hidden h-44 border border-slate-800">
+                                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80" alt="Clean Eco Friendly Modern Home Interior" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                                <div class="absolute bottom-3 left-3 text-xs font-semibold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-shield-cat text-brand-400"></i>
+                                    <span>Eco Micro-encapsulation Shield Active</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Sleek Statistics Graphics Row -->
+            <div class="py-16 border-y border-slate-800/80 bg-slate-950/40 relative">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 apple-card">
+                            <span class="text-xs text-slate-400 uppercase font-mono tracking-widest block mb-1">Homes Protected</span>
+                            <div class="text-3xl font-black font-mono text-white flex items-baseline gap-1">
+                                <span id="counter-stat-1">0</span>
+                                <span class="text-brand-400 text-lg">+</span>
+                            </div>
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full mt-3 overflow-hidden">
+                                <div id="bar-stat-1" class="bg-brand-500 h-full w-0 transition-all duration-1000"></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 apple-card">
+                            <span class="text-xs text-slate-400 uppercase font-mono tracking-widest block mb-1">Organic Purity</span>
+                            <div class="text-3xl font-black font-mono text-brand-400 flex items-baseline gap-1">
+                                <span id="counter-stat-2">0</span>
+                                <span class="text-lg">%</span>
+                            </div>
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full mt-3 overflow-hidden">
+                                <div id="bar-stat-2" class="bg-brand-400 h-full w-0 transition-all duration-1000"></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 apple-card">
+                            <span class="text-xs text-slate-400 uppercase font-mono tracking-widest block mb-1">Eco Rating</span>
+                            <div class="text-3xl font-black font-mono text-white flex items-baseline gap-1">
+                                <span id="counter-stat-3">0.0</span>
+                                <span class="text-brand-400 text-lg">/5</span>
+                            </div>
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full mt-3 overflow-hidden">
+                                <div id="bar-stat-3" class="bg-emerald-400 h-full w-0 transition-all duration-1000"></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 apple-card">
+                            <span class="text-xs text-slate-400 uppercase font-mono tracking-widest block mb-1">Response Time</span>
+                            <div class="text-3xl font-black font-mono text-white flex items-baseline gap-1">
+                                <span id="counter-stat-4">0</span>
+                                <span class="text-brand-400 text-sm font-sans">mins</span>
+                            </div>
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full mt-3 overflow-hidden">
+                                <div id="bar-stat-4" class="bg-brand-500 h-full w-0 transition-all duration-1000"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 2: SERVICES PAGE ================= -->
+        <section id="page-services" class="page-content">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+                    <div>
+                        <span class="text-brand-400 font-bold text-xs tracking-widest uppercase">Specialized Solutions</span>
+                        <h1 class="text-4xl font-black text-white mt-1">Targeted Eco-Pest Defense Protocols</h1>
+                        <p class="text-slate-400 mt-2 text-sm max-w-xl">Engineering sustainable environmental barriers tailored for coastal residential structures.</p>
+                    </div>
+
+                    <!-- Animated Realtime Bar Chart Widget -->
+                    <div class="glass-panel p-4 rounded-2xl border border-slate-800 font-mono w-full md:w-80">
+                        <div class="text-[11px] text-slate-400 mb-2 flex justify-between">
+                            <span>COLONY INTERRUPTION METRICS</span>
+                            <span class="text-brand-400 animate-pulse">LIVE</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div>
+                                <div class="flex justify-between text-[10px] mb-1">
+                                    <span>Termite Colony Interception</span>
+                                    <span id="svc-val-1" class="text-brand-400">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                                    <div id="svc-bar-1" class="bg-brand-500 h-full w-0 transition-all duration-700"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[10px] mb-1">
+                                    <span>Botanical Tick Repellency</span>
+                                    <span id="svc-val-2" class="text-emerald-400">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                                    <div id="svc-bar-2" class="bg-emerald-400 h-full w-0 transition-all duration-700"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Cards -->
+                <div class="space-y-8">
+                    
+                    <div class="glass-panel rounded-3xl p-8 border border-slate-800 apple-card grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                        <div class="relative rounded-2xl overflow-hidden h-64">
+                            <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80" alt="Residential Eco Home Shield" class="w-full h-full object-cover">
+                            <div class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-brand-300 border border-brand-500/30">RESIDENTIAL</div>
+                        </div>
+                        <div class="md:col-span-2 space-y-4">
+                            <h2 class="text-2xl font-bold text-white">Residential Interior & Exterior Shield</h2>
+                            <p class="text-slate-400 text-sm leading-relaxed">Comprehensive interior and foundation protection eliminating ants, spiders, roaches, and crawling pests using plant-derived micro-encapsulations. 100% safe for indoor environments, pets, and children.</p>
+                            
+                            <div class="grid grid-cols-2 gap-3 text-xs font-semibold text-slate-300 pt-2">
+                                <div class="flex items-center space-x-2"><i class="fa-solid fa-circle-check text-brand-400"></i><span>Zero Synthetic Residue</span></div>
+                                <div class="flex items-center space-x-2"><i class="fa-solid fa-circle-check text-brand-400"></i><span>Immediate Indoor Safe</span></div>
+                                <div class="flex items-center space-x-2"><i class="fa-solid fa-circle-check text-brand-400"></i><span>Kitchen & Pantry Approved</span></div>
+                                <div class="flex items-center space-x-2"><i class="fa-solid fa-circle-check text-brand-400"></i><span>Long-lasting Perimeter</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-3xl p-8 border border-slate-800 apple-card grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                        <div class="relative rounded-2xl overflow-hidden h-64">
+                            <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80" alt="Termite Eco Protection" class="w-full h-full object-cover">
+                            <div class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-brand-300 border border-brand-500/30">STRUCTURAL</div>
+                        </div>
+                        <div class="md:col-span-2 space-y-4">
+                            <h2 class="text-2xl font-bold text-white">Subterranean Termite Colony Interruption</h2>
+                            <p class="text-slate-400 text-sm leading-relaxed">Precision termite interception systems using non-toxic biological growth regulators. Intercepts termite colonies at soil level before structural wood compromise occurs.</p>
+                            
+                            <div class="grid grid-cols-2 gap-3 text-xs font-semibold text-slate-300 pt-2">
+                                <div class="flex items-center space-x-2"><i class="fa-solid fa-circle-check text-brand-400"></i><span>Soil-Safe Baiting Tech</span></div>
+                                <div class="flex items-center space-x-2"><i class="fa-solid fa-circle-check text-brand-400"></i><span>Colony Elimination</span></div>
+                                <div class="flex items-center space-x-2"><i class="fa-solid fa-circle-check text-brand-400"></i><span>Non-Disruptive Installation</span></div>
+                                <div class="flex items-center space-x-2"><i class="fa-solid fa-circle-check text-brand-400"></i><span>Annual Monitoring</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 3: ABOUT PAGE ================= -->
+        <section id="page-about" class="page-content">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                
+                <div class="max-w-3xl mb-12">
+                    <span class="text-brand-400 font-bold text-xs tracking-widest uppercase">Our Ethos</span>
+                    <h1 class="text-4xl font-black text-white mt-1">Redefining Environmental Pest Management</h1>
+                    <p class="text-slate-400 mt-3 text-base">Verdant Shield Pest Solutions was established to provide uncompromising structural defense against invasive pests while preserving coastal ecology.</p>
+                </div>
+
+                <!-- Live Animated Environmental Data Graphic Card -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-16">
+                    <div class="glass-panel p-8 rounded-3xl border border-slate-800 space-y-6">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-4 font-mono">
+                            <span class="text-xs text-brand-400">ECOLOGICAL IMPACT MATRIX</span>
+                            <span id="about-iter-badge" class="text-[10px] bg-brand-500/10 text-brand-300 px-2.5 py-1 rounded-full border border-brand-500/20">ITERATION #000</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 font-mono">
+                            <div class="p-4 rounded-2xl bg-slate-950/60 border border-slate-800">
+                                <span class="text-[10px] text-slate-400 uppercase">Chemical Offset</span>
+                                <div class="text-2xl font-bold text-white mt-1"><span id="abt-stat-1">0</span> <span class="text-xs text-brand-400">lbs</span></div>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-slate-950/60 border border-slate-800">
+                                <span class="text-[10px] text-slate-400 uppercase">Aquifer Safety</span>
+                                <div class="text-2xl font-bold text-brand-400 mt-1"><span id="abt-stat-2">0</span><span class="text-xs">%</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Smooth Waveform Visual Graphic -->
+                        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
+                            <div class="flex justify-between text-[11px] font-mono text-slate-400">
+                                <span>Aquifer Purity Frequency Index</span>
+                                <span id="wave-freq" class="text-brand-400">440 Hz</span>
+                            </div>
+                            <div class="flex items-end justify-between h-12 gap-1 pt-2">
+                                <div id="wave-bar-1" class="w-full bg-brand-500/30 rounded-t h-4 transition-all duration-300"></div>
+                                <div id="wave-bar-2" class="w-full bg-brand-400/50 rounded-t h-8 transition-all duration-300"></div>
+                                <div id="wave-bar-3" class="w-full bg-brand-500 rounded-t h-12 transition-all duration-300"></div>
+                                <div id="wave-bar-4" class="w-full bg-emerald-400/60 rounded-t h-6 transition-all duration-300"></div>
+                                <div id="wave-bar-5" class="w-full bg-brand-300/40 rounded-t h-10 transition-all duration-300"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-3 rounded-3xl border border-slate-800 apple-card">
+                        <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1000&q=80" alt="Eco Friendly Nature and Forest" class="rounded-2xl h-80 w-full object-cover">
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 4: BLOG PAGE ================= -->
+        <section id="page-blog" class="page-content">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                
+                <!-- Blog Reading Analytics Graphic Badge -->
+                <div class="mb-8 p-4 glass-panel rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
+                    <div class="flex items-center space-x-3">
+                        <span class="w-2.5 h-2.5 rounded-full bg-brand-400 animate-ping"></span>
+                        <span class="text-slate-300">ARTICLE INDEX: ECO-INSIGHTS</span>
+                    </div>
+                    <div class="flex items-center space-x-6 text-slate-400">
+                        <span>WORD COUNT: <strong class="text-white">1,280</strong></span>
+                        <span>READ TIME: <strong class="text-brand-400">12 MIN</strong></span>
+                    </div>
+                </div>
+
+                <div class="mb-10 text-center space-y-4">
+                    <span class="inline-block bg-brand-500/10 border border-brand-500/30 text-brand-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest glow-badge">
+                        Comprehensive Eco-Home Guide
+                    </span>
+                    <h1 class="text-3xl sm:text-5xl font-black text-white leading-tight">
+                        The Ultimate Guide to Eco-Friendly Pest Control and Property Defense
+                    </h1>
+                </div>
+
+                <div class="glass-panel p-3 rounded-3xl border border-slate-800 mb-12 apple-card">
+                    <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80" alt="Modern Clean Living Space" class="w-full h-80 sm:h-96 object-cover rounded-2xl">
+                </div>
+
+                <!-- Detailed 1200+ Word SEO Blog -->
+                <article class="prose prose-invert max-w-none text-slate-300 leading-relaxed space-y-6 text-base">
+                    
+                    <p class="text-lg text-slate-200 font-normal leading-relaxed">
+                        Maintaining a secure, comfortable, and pest-free residential environment is a primary objective for property owners throughout coastal suburban regions. However, fluctuating seasonal temperatures, dense natural foliage, and elevated moisture levels create constant pest pressures. Achieving long-term protection without introducing harsh chemical toxins into your living environment requires an intelligent, eco-friendly approach.
+                    </p>
+
+                    <h2 class="text-2xl font-extrabold text-white border-b border-slate-800 pb-2 pt-4">Understanding Regional Coastal Pest Ecosystems</h2>
+                    
+                    <p>
+                        Homes situated near coastal waters experience distinct environmental conditions that influence insect behavior. High humidity levels, combined with sandy soils and dense pine barrens, encourage rapid reproduction of carpenter ants, subterranean termites, ticks, and rodents. During spring and early summer, colonies expand rapidly, seeking out new food sources and moisture points around structural foundations.
+                    </p>
+
+                    <p>
+                        As winter approaches, cooler evening temperatures trigger secondary pest invasions. Rodents, spiders, and overwintering beetles actively seek warm, sheltered spaces within wall voids, attics, and basements. Traditional pest control relied on heavy synthetic chemical sprays broadcast across interior floorboards. However, modern research shows that repetitive chemical sprays contribute to pest resistance and compromise indoor air quality.
+                    </p>
+
+                    <p>
+                        By choosing modern green solutions such as <a href="https://quickpestcontrolpro.com/pest-control-patchogue-ny" class="text-brand-400 hover:text-brand-300 font-semibold underline decoration-brand-500/50 underline-offset-4 transition-colors">Pest Control in Patchogue, NY</a>, homeowners benefit from advanced biological deterrence, structural sealing, and eco-friendly perimeter barriers that keep invasive threats outside where they belong.
+                    </p>
+
+                    <h3 class="text-xl font-bold text-white pt-2">Moisture Dynamics and Ingress Risk</h3>
+                    <p>
+                        Excess moisture near foundations is one of the single largest drivers of structural insect infestation. Wood-boring insects, including carpenter ants and termites, are biologically attracted to softened wood fibers caused by roof runoff, gutter overflows, or poor soil grading. Resolving moisture accumulation through proper drainage installation and vapor barriers forms the essential foundation of any successful pest deterrence program.
+                    </p>
+
+                    <h2 class="text-2xl font-extrabold text-white border-b border-slate-800 pb-2 pt-6">Principles of Integrated Pest Management (IPM)</h2>
+
+                    <p>
+                        Integrated Pest Management (IPM) represents the gold standard in modern ecological pest deterrence. Rather than relying solely on reactive treatments, IPM utilizes a systematic approach prioritizing inspection, biological controls, and physical exclusion.
+                    </p>
+
+                    <h3 class="text-xl font-bold text-white pt-2">1. Structural Exclusion and Sealing</h3>
+                    <p>
+                        Preventing pests from entering a home is far more effective than treating an active indoor infestation. Professional technicians conduct thorough perimeter audits to identify entry pathways—including utility line gaps, foundation cracks, worn door sweeps, and attic vents. Sealing these entry points with durable materials like copper mesh and exterior-grade silicone creates a physical shield against rodents and insects.
+                    </p>
+
+                    <h3 class="text-xl font-bold text-white pt-2">2. Botanical Micro-Encapsulated Active Actives</h3>
+                    <p>
+                        Innovations in botanical green chemistry have yielded highly effective pest control formulations derived from plant extracts such as rosemary oil, peppermint, geraniol, and cedarwood oil. These natural active ingredients disrupt insect octopamine neurotransmitter receptors without affecting humans, domestic pets, or beneficial wildlife.
+                    </p>
+
+                    <div class="my-8 glass-panel p-2 rounded-2xl border border-slate-800">
+                        <img src="https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1000&q=80" alt="Eco Friendly Green Garden Nature" class="w-full h-72 object-cover rounded-xl">
+                    </div>
+
+                    <h2 class="text-2xl font-extrabold text-white border-b border-slate-800 pb-2 pt-4">Seasonal Eco-Defense Checklist for Homeowners</h2>
+
+                    <p>
+                        Proactive seasonal maintenance ensures year-round protection against regional pests. Below is a structured checklist designed by eco-specialists:
+                    </p>
+
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4 my-6">
+                        <h4 class="font-bold text-brand-400 text-lg">Spring & Summer Actions:</h4>
+                        <ul class="list-disc pl-5 space-y-2 text-sm text-slate-300">
+                            <li>Trim tree branches and shrubs back at least 2 feet from exterior siding to remove insect bridges.</li>
+                            <li>Clear standing water from rain gutters, bird baths, and plant saucers every 48 hours to eliminate mosquito breeding spots.</li>
+                            <li>Inspect door sweeps and garage bottom seals, replacing worn weather stripping promptly.</li>
+                        </ul>
+
+                        <h4 class="font-bold text-brand-400 text-lg pt-2">Autumn & Winter Actions:</h4>
+                        <ul class="list-disc pl-5 space-y-2 text-sm text-slate-300">
+                            <li>Store firewood at least 20 feet away from the main home structure on elevated racks.</li>
+                            <li>Seal gaps around foundation window frames, dryer vents, and outdoor hose spigots using copper mesh and caulk.</li>
+                            <li>Schedule a professional autumn perimeter barrier application to deter winterizing mice and boxelder bugs.</li>
+                        </ul>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-white pt-2">Subterranean Termite Prevention Protocol</h3>
+                    <p>
+                        Subterranean termites cause significant structural damage across coastal regions each year. Because termite colonies live deep underground, traditional liquid chemical treatments involved pumping hundreds of gallons of synthetic termiticide into the soil around foundations. Modern eco-friendly termite protocols utilize discrete perimeter bait stations containing insect growth regulators. Termites transport the non-toxic bait back to the central colony, eliminating the queen and entire colony safely without soil contamination.
+                    </p>
+
+                    <h2 class="text-2xl font-extrabold text-white border-b border-slate-800 pb-2 pt-6">Conclusion</h2>
+                    <p>
+                        Maintaining a clean, secure, and pest-free living space does not require compromising family health or local ecosystems. By adopting an Integrated Pest Management strategy built on physical exclusion, moisture management, and botanical micro-encapsulated treatments, property owners can achieve permanent tranquility. Partnering with certified eco-conscious specialists guarantees long-term protection through safe, intelligent, and sustainable methods.
+                    </p>
+
+                    <!-- FNP Section (Frequently Noted Points) -->
+                    <div class="mt-12 pt-8 border-t border-slate-800">
+                        <h2 class="text-2xl font-bold text-white mb-6">Frequently Noted Points (FNP)</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+                                <h3 class="font-bold text-white text-base mb-2">Are botanical pest control treatments as effective as synthetic chemical sprays?</h3>
+                                <p class="text-slate-400 text-sm">
+                                    Yes. Modern micro-encapsulated plant oil active ingredients deliver equivalent knockdown power and long-lasting repellency. Combined with physical exclusion, botanical treatments offer superior long-term results without chemical residue.
+                                </p>
+                            </div>
+
+                            <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+                                <h3 class="font-bold text-white text-base mb-2">How quickly can children and pets enter treated areas after application?</h3>
+                                <p class="text-slate-400 text-sm">
+                                    Because our formulations utilize botanical active ingredients, treated areas are safe for children and pets as soon as the spray mist dries—typically within 20 to 30 minutes.
+                                </p>
+                            </div>
+
+                            <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+                                <h3 class="font-bold text-white text-base mb-2">How often should home exterior eco-barriers be reapplied?</h3>
+                                <p class="text-slate-400 text-sm">
+                                    For optimal year-round protection, quarterly exterior treatments (4 times per year) maintain a continuous deterrent barrier against seasonal pest migrations.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </article>
+
+            </div>
+        </section>
+
+
+        <!-- ================= PAGE 5: CONTACT PAGE ================= -->
+        <section id="page-contact" class="page-content">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-brand-400 font-bold text-xs tracking-widest uppercase">Get Started</span>
+                    <h1 class="text-4xl font-black text-white mt-2">Request Your Custom Eco-Inspection</h1>
+                    <p class="text-slate-400 mt-3 text-sm">Submit your property details below. Our certified eco-specialists will review your request and construct a tailored defense strategy.</p>
+                </div>
+
+                <!-- Realtime Response Guarantee Graphic Box -->
+                <div class="mb-8 glass-panel p-4 rounded-2xl border border-slate-800 flex items-center justify-between font-mono text-xs">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-3 h-3 rounded-full bg-brand-400 animate-pulse"></div>
+                        <span class="text-slate-300">INTAKE DISPATCH ENGINE</span>
+                    </div>
+                    <div class="text-brand-400">
+                        AVG RESPONSE: <strong id="cnt-contact-resp">0</strong> MINS
+                    </div>
+                </div>
+
+                <!-- Pure Intake Form -->
+                <div class="glass-panel rounded-3xl p-8 sm:p-12 border border-slate-800 apple-card">
+                    <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="client-name" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Your Full Name *</label>
+                                <input type="text" id="client-name" required placeholder="John Doe" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all">
+                            </div>
+                            <div>
+                                <label for="client-email" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Email Address *</label>
+                                <input type="email" id="client-email" required placeholder="john@example.com" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="client-phone" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Phone Number *</label>
+                                <input type="tel" id="client-phone" required placeholder="(555) 000-0000" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all">
+                            </div>
+                            <div>
+                                <label for="service-type" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Select Defense Protocol *</label>
+                                <select id="service-type" required class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all">
+                                    <option value="" disabled selected class="bg-slate-900 text-slate-400">Select protocol required</option>
+                                    <option value="Residential Eco Protection" class="bg-slate-900 text-white">Residential General Defense</option>
+                                    <option value="Termite Interruption" class="bg-slate-900 text-white">Subterranean Termite Protocol</option>
+                                    <option value="Tick & Mosquito Yard Spray" class="bg-slate-900 text-white">Yard Tick & Mosquito Fogging</option>
+                                    <option value="Commercial Eco Shield" class="bg-slate-900 text-white">Commercial Eco Property Plan</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="client-message" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Property Notes & Specific Pest Concerns *</label>
+                            <textarea id="client-message" rows="5" required placeholder="Describe any active pest sightings, property size, or preferred consultation times..." class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all resize-none"></textarea>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 font-bold text-white shadow-xl shadow-brand-500/20 hover:shadow-brand-500/40 transition-all text-sm tracking-wide">
+                                Submit Consultation Request
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SUCCESS MODAL -->
+    <div id="modal-success" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="glass-panel rounded-3xl p-8 max-w-md w-full text-center border border-slate-800 shadow-2xl">
+            <div class="w-16 h-16 bg-brand-500/10 border border-brand-500/30 text-brand-400 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Request Recorded</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                Thank you for reaching out. Your consultation request has been submitted securely. An eco-specialist will review your notes and contact you shortly.
+            </p>
+            <button onclick="closeModal()" class="w-full bg-brand-500 hover:bg-brand-600 text-slate-950 font-bold py-3 rounded-xl transition-all text-sm">
+                Return to Site
+            </button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800/80 py-12 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-slate-950 font-bold">
+                        <i class="fa-solid fa-leaf text-sm"></i>
+                    </div>
+                    <span class="text-base font-bold text-white tracking-tight">Verdant Shield Pest Solutions</span>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-6 text-xs font-semibold text-slate-400">
+                    <a href="#" onclick="switchPage('home'); return false;" class="hover:text-brand-400 transition-colors">Home</a>
+                    <a href="#" onclick="switchPage('services'); return false;" class="hover:text-brand-400 transition-colors">Services</a>
+                    <a href="#" onclick="switchPage('about'); return false;" class="hover:text-brand-400 transition-colors">About Us</a>
+                    <a href="#" onclick="switchPage('blog'); return false;" class="hover:text-brand-400 transition-colors">Articles</a>
+                    <a href="#" onclick="switchPage('contact'); return false;" class="hover:text-brand-400 transition-colors">Contact</a>
+                </div>
+
+                <div class="text-xs text-slate-500">
+                    &copy; 2026 Verdant Shield Pest Solutions. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT & AUDIO ENGINE -->
+    <script>
+        // High-end Web Audio API Synthesizer (Permanently Active)
+        let audioCtx = null;
+        const soundEnabled = true;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) {
+                    audioCtx = new AudioContextClass();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        // Soft, Luxury Apple-style Transition Chime & Swoosh
+        function playTransitionSound() {
+            const ctx = getAudioContext();
+            if (!ctx) return;
+
+            const now = ctx.currentTime;
+
+            // 1. Soft Sub-Frequency Air Sweep
+            const bufferSize = ctx.sampleRate * 0.25;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+
+            const noiseFilter = ctx.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.setValueAtTime(300, now);
+            noiseFilter.frequency.exponentialRampToValueAtTime(1400, now + 0.2);
+            noiseFilter.Q.value = 3.0;
+
+            const noiseGain = ctx.createGain();
+            noiseGain.gain.setValueAtTime(0.01, now);
+            noiseGain.gain.linearRampToValueAtTime(0.08, now + 0.1);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(ctx.destination);
+
+            noise.start(now);
+            noise.stop(now + 0.25);
+
+            // 2. Dual Elegant Sine Chime (E5 -> G#5 -> B5 Chord Bloom)
+            const frequencies = [659.25, 830.61, 987.77];
+            frequencies.forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now + (idx * 0.05));
+
+                gain.gain.setValueAtTime(0.001, now + (idx * 0.05));
+                gain.gain.linearRampToValueAtTime(0.06, now + (idx * 0.05) + 0.03);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + (idx * 0.05) + 0.35);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start(now + (idx * 0.05));
+                osc.stop(now + (idx * 0.05) + 0.38);
+            });
+        }
+
+        // Auto-initialize Audio Context on first user interaction anywhere
+        ['click', 'touchstart', 'keydown'].forEach(evt => {
+            window.addEventListener(evt, () => {
+                getAudioContext();
+            }, { once: true });
+        });
+
+        // Smooth Page Switcher with Shutter Overlay & Synchronized Motion Sound
+        let isTransitioning = false;
+
+        function switchPage(pageId) {
+            if (isTransitioning) return;
+
+            const currentPage = document.querySelector('.page-content.active');
+            if (currentPage && currentPage.id === 'page-' + pageId) return;
+
+            isTransitioning = true;
+
+            // Trigger Transition Sound & Shutter Wave Graphic
+            playTransitionSound();
+            const shutter = document.getElementById('transition-shutter');
+            if (shutter) shutter.classList.add('shutter-active');
+
+            setTimeout(() => {
+                const pages = document.querySelectorAll('.page-content');
+                pages.forEach(page => page.classList.remove('active'));
+
+                const targetPage = document.getElementById('page-' + pageId);
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                }
+
+                const navButtons = document.querySelectorAll('.nav-btn');
+                navButtons.forEach(btn => {
+                    btn.classList.remove('bg-brand-500/20', 'text-brand-400', 'border', 'border-brand-500/30');
+                    btn.classList.add('text-slate-400');
+                });
+
+                const activeBtn = document.getElementById('nav-' + pageId);
+                if (activeBtn) {
+                    activeBtn.classList.add('bg-brand-500/20', 'text-brand-400', 'border', 'border-brand-500/30');
+                    activeBtn.classList.remove('text-slate-400');
+                }
+
+                window.scrollTo({ top: 0, behavior: 'auto' });
+
+                // Trigger Page Stat Counters
+                triggerPageCounters(pageId);
+
+                setTimeout(() => {
+                    if (shutter) shutter.classList.remove('shutter-active');
+                    isTransitioning = false;
+                }, 150);
+            }, 300);
+        }
+
+
+        // Smooth Number Counter & Bar Iteration Engine
+        function animateNumber(elementId, start, end, duration, decimal = 0) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            let startTime = null;
+
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                // EaseOutExpo
+                const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                const value = start + (end - start) * easeProgress;
+                el.innerText = value.toFixed(decimal);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            }
+            window.requestAnimationFrame(step);
+        }
+
+        function setProgressBarWidth(elementId, percentage) {
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.style.width = percentage + '%';
+            }
+        }
+
+        // Global Iteration State
+        let currentIteration = 100;
+
+        function triggerPageCounters(pageId) {
+            currentIteration++;
+
+            if (pageId === 'home') {
+                animateNumber('counter-home-eff', 0, 99.8, 1500, 1);
+                animateNumber('counter-home-sqft', 0, 48500, 1800);
+                animateNumber('counter-home-tox', 1.5, 0.00, 1200, 2);
+
+                const ring = document.getElementById('home-ring');
+                if (ring) {
+                    ring.style.strokeDashoffset = 283 - (283 * 0.998);
+                }
+
+                animateNumber('counter-stat-1', 0, 1420, 1600);
+                animateNumber('counter-stat-2', 0, 100, 1400);
+                animateNumber('counter-stat-3', 0, 4.9, 1200, 1);
+                animateNumber('counter-stat-4', 0, 15, 1000);
+
+                setProgressBarWidth('bar-stat-1', 95);
+                setProgressBarWidth('bar-stat-2', 100);
+                setProgressBarWidth('bar-stat-3', 98);
+                setProgressBarWidth('bar-stat-4', 90);
+            }
+
+            if (pageId === 'services') {
+                animateNumber('svc-val-1', 0, 99.4, 1400, 1);
+                animateNumber('svc-val-2', 0, 98.7, 1400, 1);
+                setProgressBarWidth('svc-bar-1', 99.4);
+                setProgressBarWidth('svc-bar-2', 98.7);
+            }
+
+            if (pageId === 'about') {
+                document.getElementById('about-iter-badge').innerText = `ITERATION #${currentIteration}`;
+                animateNumber('abt-stat-1', 0, 12450, 1500);
+                animateNumber('abt-stat-2', 0, 100, 1200);
+
+                // Animate Random Waveform Bars smoothly
+                for (let i = 1; i <= 5; i++) {
+                    const bar = document.getElementById('wave-bar-' + i);
+                    if (bar) {
+                        const randomHeight = Math.floor(Math.random() * 32) + 12;
+                        bar.style.height = randomHeight + 'px';
+                    }
+                }
+            }
+
+            if (pageId === 'contact') {
+                animateNumber('cnt-contact-resp', 0, 12, 1000);
+            }
+        }
+
+
+        // Continuous Background Graphic Iteration Loop (Every 4 Seconds)
+        setInterval(() => {
+            currentIteration++;
+            const activePage = document.querySelector('.page-content.active');
+            if (activePage) {
+                const activeId = activePage.id.replace('page-', '');
+                if (activeId === 'about') {
+                    const badge = document.getElementById('about-iter-badge');
+                    if (badge) badge.innerText = `ITERATION #${currentIteration}`;
+                    for (let i = 1; i <= 5; i++) {
+                        const bar = document.getElementById('wave-bar-' + i);
+                        if (bar) {
+                            bar.style.height = (Math.floor(Math.random() * 36) + 10) + 'px';
+                        }
+                    }
+                }
+            }
+        }, 4000);
+
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                menu.classList.add('hidden');
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // Form Submit Handler
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const modal = document.getElementById('modal-success');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('contact-form').reset();
+            playTransitionSound();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal-success');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Biological Particles Canvas System
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(16, 185, 129, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.floor(window.innerWidth / 25);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            triggerPageCounters('home');
+            initParticles();
+            animateParticles();
+        });
+    </script>
+</body>
+</html>
